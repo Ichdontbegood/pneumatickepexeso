@@ -7,31 +7,31 @@
     <style>
         /* --- DEFINICE TÉMAT (CSS Proměnné) --- */
         
-        /* 1. Cyber (Výchozí) */
+        /* 1. Cyber (Výchozí - Tmavé) */
         :root {
             --bg-color: #1e293b;
             --text-color: #f1f5f9;
             --accent: #38bdf8;
             --accent-hover: #0ea5e9;
-            --card-back: #334155;
+            --card-back: #334155; /* Tmavé pozadí kartičky */
             --correct: #22c55e;
             --wrong: #ef4444;
             --modal-bg: rgba(30, 41, 59, 0.95);
         }
 
-        /* 2. Kancelář (Světlý) */
+        /* 2. Kancelář (Světlé) */
         [data-theme="office"] {
             --bg-color: #f8fafc;
             --text-color: #1e293b;
             --accent: #2563eb;
             --accent-hover: #1d4ed8;
-            --card-back: #e2e8f0;
+            --card-back: #e2e8f0; /* Světlé pozadí kartičky */
             --correct: #16a34a;
             --wrong: #dc2626;
             --modal-bg: rgba(255, 255, 255, 0.95);
         }
 
-        /* 3. Les (Přírodní) */
+        /* 3. Les (Přírodní - Tmavé) */
         [data-theme="forest"] {
             --bg-color: #1a2e1a;
             --text-color: #ecfccb;
@@ -43,7 +43,7 @@
             --modal-bg: rgba(26, 46, 26, 0.95);
         }
 
-        /* 4. Retro (Starý papír) */
+        /* 4. Retro (Starý papír - Světlé) */
         [data-theme="retro"] {
             --bg-color: #fef3c7;
             --text-color: #78350f;
@@ -55,7 +55,7 @@
             --modal-bg: rgba(254, 243, 199, 0.95);
         }
 
-        /* 5. Drákula (Fialová) */
+        /* 5. Drákula (Fialová - Tmavé) */
         [data-theme="dracula"] {
             --bg-color: #2e1065;
             --text-color: #e9d5ff;
@@ -103,7 +103,7 @@
 
         .btn {
             background: linear-gradient(135deg, var(--accent), var(--accent-hover));
-            color: white; /* U většiny témat bílá funguje, u světlých témat je kontrast ok */
+            color: white;
             border: none;
             padding: 15px 30px;
             font-size: 1.2rem;
@@ -118,7 +118,7 @@
         }
 
         .btn:hover { transform: scale(1.05); filter: brightness(1.1); }
-        .btn-secondary { background: var(--card-back); font-size: 1rem; padding: 10px 20px; }
+        .btn-secondary { background: var(--card-back); font-size: 1rem; padding: 10px 20px; color: var(--text-color); }
 
         /* --- LAYOUT HER --- */
         .menu-container {
@@ -185,6 +185,7 @@
         }
 
         .card-back {
+            /* Zde je pozadí vždy bílé, aby obrázky vypadaly dobře */
             background-color: #fff;
             color: #000;
             transform: rotateY(180deg);
@@ -192,7 +193,6 @@
             border: 2px solid var(--accent);
         }
         
-        /* Specifické chování pro obrázky v kartách - aby byly vidět */
         .card-back img { width: 90%; height: 90%; object-fit: contain; }
 
         /* --- SPOJOVAČKA --- */
@@ -219,23 +219,26 @@
             text-align: center;
             transition: 0.2s;
             user-select: none;
+            /* Pokud je obrázek menší než buňka, zajistíme, aby pozadí za ním bylo bílé */
+            overflow: hidden; 
+        }
+        
+        /* Speciální úprava pro položky, které obsahují obrázek */
+        .match-item:has(img) {
+             background-color: white; /* Vynutíme bílé pozadí pro buňku s obrázkem */
+             color: black;
         }
 
         .match-item:hover { border-color: var(--accent); }
-        .match-item.selected { background-color: var(--accent); color: white; transform: scale(1.02); }
-        .match-item.correct { background-color: var(--correct); border-color: var(--correct); opacity: 0.5; pointer-events: none; }
+        .match-item.selected { background-color: var(--accent) !important; color: white !important; transform: scale(1.02); }
+        .match-item.correct { background-color: var(--correct) !important; border-color: var(--correct); opacity: 0.5; pointer-events: none; }
         .match-item.wrong { animation: shake 0.4s; border-color: var(--wrong); }
 
+        /* ZDE BYLA ZMĚNA: Odstraněn filter: invert(1) */
         .match-item img { 
-            max-height: 50px; 
-            /* Inverze barev pro témata s tmavým pozadím, aby černé čáry byly vidět bíle */
-            filter: invert(1); 
+            max-height: 50px;
+            /* Obrázky se nyní zobrazují v originále (černé na bílém) */
         }
-        
-        /* Výjimka pro světlé téma (Office, Retro) - tam obrázky neinvertujeme */
-        [data-theme="office"] .match-item img, 
-        [data-theme="retro"] .match-item img { filter: none; }
-
 
         /* --- VYSKAKOVACÍ OKNO (MODAL) --- */
         .modal {
@@ -288,9 +291,9 @@
         <select id="themeSelect" onchange="changeTheme(this.value)">
             <option value="default">Cyber (Tmavé)</option>
             <option value="office">Kancelář (Světlé)</option>
-            <option value="forest">Les</option>
-            <option value="retro">Retro</option>
-            <option value="dracula">Drákula</option>
+            <option value="forest">Les (Tmavé)</option>
+            <option value="retro">Retro (Světlé)</option>
+            <option value="dracula">Drákula (Tmavé)</option>
         </select>
     </div>
 
@@ -335,7 +338,6 @@
 
     <script>
         // --- DATA ---
-        // Změněno na .jpg a přidána cesta imgs/
         const data = [
             { id: 1, name: "Dvojčinný pohon", img: "imgs/img1.jpg" },
             { id: 2, name: "Jednočinný pohon", img: "imgs/img2.jpg" },
