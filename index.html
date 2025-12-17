@@ -143,7 +143,7 @@
         .match-item.correct { background-color: var(--correct); border-color: var(--correct); pointer-events: none; opacity: 0.6; }
         .match-item.wrong { animation: shake 0.4s; border-color: var(--wrong); }
 
-        .match-item img { max-height: 50px; filter: invert(1); } /* Invertuje barvy pro tmavý režim pokud máš černé čáry */
+        .match-item img { max-height: 50px; filter: invert(1); } /* Invertuje barvy pro tmavý režim */
         .match-item.correct img { filter: brightness(0) invert(1); }
 
         /* Responzivita */
@@ -181,21 +181,20 @@
 
     <script>
         // --- DATA Z TVÉHO OBRÁZKU ---
-        // Zde jsou přepsané názvy z fotky.
-        // 'img' odkazuje na soubor, který musíš vytvořit (výstřižek z fotky).
+        // Nyní cesty směřují do složky "imgs/"
         const data = [
-            { id: 1, name: "Dvojčinný pohon", img: "img1.png" },
-            { id: 2, name: "Jednočinný pohon", img: "img2.png" },
-            { id: 3, name: "Kompresor, zdroj tlaku", img: "img3.png" },
-            { id: 4, name: "Jednotka úpravy vzduchu", img: "img4.png" },
-            { id: 5, name: "Motor s průchozí pístnicí", img: "img5.png" },
-            { id: 6, name: "Motor s nastavitelným tlumením", img: "img6.png" },
-            { id: 7, name: "Kyvný motor", img: "img7.png" },
-            { id: 8, name: "Rotační motor", img: "img8.png" },
-            { id: 9, name: "Zpětný ventil", img: "img9.png" },
-            { id: 10, name: "Škrtící ventil", img: "img10.png" },
-            { id: 11, name: "Manometr", img: "img11.png" },
-            { id: 12, name: "Redukční ventil", img: "img12.png" }
+            { id: 1, name: "Dvojčinný pohon", img: "imgs/img1.png" },
+            { id: 2, name: "Jednočinný pohon", img: "imgs/img2.png" },
+            { id: 3, name: "Kompresor, zdroj tlaku", img: "imgs/img3.png" },
+            { id: 4, name: "Jednotka úpravy vzduchu", img: "imgs/img4.png" },
+            { id: 5, name: "Motor s průchozí pístnicí", img: "imgs/img5.png" },
+            { id: 6, name: "Motor s nastavitelným tlumením", img: "imgs/img6.png" },
+            { id: 7, name: "Kyvný motor", img: "imgs/img7.png" },
+            { id: 8, name: "Rotační motor", img: "imgs/img8.png" },
+            { id: 9, name: "Zpětný ventil", img: "imgs/img9.png" },
+            { id: 10, name: "Škrtící ventil", img: "imgs/img10.png" },
+            { id: 11, name: "Manometr", img: "imgs/img11.png" },
+            { id: 12, name: "Redukční ventil", img: "imgs/img12.png" }
         ];
 
         // --- NAVIGACE ---
@@ -217,19 +216,18 @@
             document.getElementById('menu').style.display = 'flex';
         }
 
-        // --- LOGIKA PEXESA (Symbol vs Text) ---
+        // --- LOGIKA PEXESA ---
         function initPexeso() {
             const board = document.getElementById('pexeso-board');
             board.innerHTML = '';
             
-            // Vytvoříme pole karet: pro každé ID jednu kartu s textem a jednu s obrázkem
             let cards = [];
             data.forEach(item => {
                 cards.push({ id: item.id, type: 'text', content: item.name });
+                // Zde se používá cesta definovaná v poli data (tzn. imgs/...)
                 cards.push({ id: item.id, type: 'img', content: `<img src="${item.img}" alt="Symbol ${item.id}" onerror="this.src='https://placehold.co/100?text=${item.id}'">` });
             });
 
-            // Zamíchat
             cards.sort(() => 0.5 - Math.random());
 
             let hasFlippedCard = false;
@@ -265,7 +263,6 @@
             });
 
             function checkForMatch() {
-                // Porovnáváme ID karet (např. ID 1 Text == ID 1 Obrázek)
                 let isMatch = firstCard.dataset.id === secondCard.dataset.id;
                 isMatch ? disableCards() : unflipCards();
             }
@@ -303,26 +300,22 @@
             leftCol.innerHTML = '';
             rightCol.innerHTML = '';
 
-            // Připravíme data
-            let leftItems = [...data]; // Symboly
-            let rightItems = [...data]; // Texty
+            let leftItems = [...data];
+            let rightItems = [...data];
 
-            // Zamícháme jen jednu stranu (pravou), aby to nebylo v řádku
             rightItems.sort(() => 0.5 - Math.random());
 
-            // Vykreslení LEVÉHO sloupce (Obrázky)
             leftItems.forEach(item => {
                 const el = document.createElement('div');
                 el.classList.add('match-item');
                 el.dataset.id = item.id;
                 el.dataset.side = 'left';
-                // Fallback obrázek (když ho nenajde, zobrazí číslo)
+                // Použití cesty z dat (imgs/...)
                 el.innerHTML = `<img src="${item.img}" alt="Symbol" onerror="this.style.display='none'; this.parentElement.innerText='Symbol ${item.id}'">`;
                 el.addEventListener('click', handleMatchClick);
                 leftCol.appendChild(el);
             });
 
-            // Vykreslení PRAVÉHO sloupce (Texty)
             rightItems.forEach(item => {
                 const el = document.createElement('div');
                 el.classList.add('match-item');
@@ -356,12 +349,10 @@
 
         function checkPair() {
             if (selectedLeft.dataset.id === selectedRight.dataset.id) {
-                // Správně
                 selectedLeft.classList.add('correct');
                 selectedRight.classList.add('correct');
                 clearSelection();
             } else {
-                // Špatně
                 selectedLeft.classList.add('wrong');
                 selectedRight.classList.add('wrong');
                 setTimeout(() => {
