@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Herní Portál</title>
+    <title>Pneumatika hrou</title>
     <style>
-        /* --- MODERNÍ CSS STYLY --- */
         :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --secondary: #ec4899;
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-color: #f8fafc;
+            --bg-color: #1e293b;     /* Tmavě modrá */
+            --text-color: #f1f5f9;   /* Světlá šedá */
+            --accent: #38bdf8;       /* Světle modrá (pneumatika) */
+            --accent-hover: #0ea5e9;
+            --card-back: #334155;
+            --correct: #22c55e;
+            --wrong: #ef4444;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
@@ -26,333 +26,340 @@
             min-height: 100vh;
         }
 
-        h1, h2 {
-            text-align: center;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 2rem;
-        }
+        h1, h2 { text-align: center; color: var(--accent); margin-top: 20px; }
 
-        /* Navigace a Kontejnery */
-        .container {
-            display: none; /* Skryto defaultně */
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 1000px;
-            padding: 20px;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .container.active {
+        /* --- MENU --- */
+        .menu-container {
             display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 10vh;
+            animation: fadeIn 1s ease;
         }
 
-        /* Tlačítka */
         .btn {
-            padding: 15px 30px;
-            margin: 10px;
-            font-size: 1.2rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            color: white;
             border: none;
-            border-radius: 50px;
+            padding: 20px 40px;
+            font-size: 1.5rem;
+            border-radius: 12px;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
-            font-weight: bold;
-            color: white;
             text-transform: uppercase;
+            font-weight: bold;
             letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
         }
 
-        .btn-game1 { background: linear-gradient(135deg, #3b82f6, #8b5cf6); }
-        .btn-game2 { background: linear-gradient(135deg, #ec4899, #f43f5e); }
-        .btn-back { background: #334155; margin-top: 30px; font-size: 1rem; }
+        .btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(56, 189, 248, 0.6); }
+        .btn-small { padding: 10px 20px; font-size: 1rem; margin: 20px; background: var(--card-back); }
 
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
+        /* --- HERNÍ PLOCHY --- */
+        .game-section { display: none; width: 100%; max-width: 1200px; flex-direction: column; align-items: center; }
+        .game-section.active { display: flex; }
 
-        /* --- HRA 1: PEXESO --- */
+        /* --- PEXESO STYLY --- */
         .pexeso-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(6, 1fr); /* 6 karet na řádek */
             gap: 15px;
+            margin: 20px;
             perspective: 1000px;
         }
 
-        .pexeso-card {
-            width: 80px;
-            height: 80px;
+        .card {
+            width: 120px;
+            height: 120px;
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.5s;
+            transition: transform 0.6s;
             cursor: pointer;
         }
 
-        .pexeso-card.flipped {
-            transform: rotateY(180deg);
-        }
+        .card.flipped { transform: rotateY(180deg); }
+        .card.matched { visibility: hidden; opacity: 0; transition: opacity 0.5s; }
 
-        .pexeso-card .front, .pexeso-card .back {
+        .card-face {
+            position: absolute;
             width: 100%;
             height: 100%;
-            position: absolute;
             backface-visibility: hidden;
-            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-
-        .pexeso-card .front {
-            background-color: var(--card-bg); /* Rub karty */
-            color: var(--primary);
-            border: 2px solid var(--primary);
-        }
-
-        .pexeso-card .back {
-            background-color: var(--text-color); /* Líc karty (obrázek) */
-            color: #000;
-            transform: rotateY(180deg);
-        }
-        
-        /* Pro obrázky v pexesu */
-        .pexeso-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
             border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            text-align: center;
+            font-weight: bold;
+            padding: 5px;
+            box-sizing: border-box;
+            font-size: 0.9rem;
         }
 
-        /* --- HRA 2: SPOJOVÁNÍ --- */
-        .matching-area {
+        .card-front {
+            background-color: var(--card-back);
+            color: var(--accent);
+            font-size: 2rem;
+            border: 2px solid var(--accent);
+        }
+
+        .card-back {
+            background-color: white;
+            color: black;
+            transform: rotateY(180deg);
+            overflow: hidden;
+        }
+
+        .card-back img { width: 90%; height: 90%; object-fit: contain; }
+
+        /* --- SPOJOVÁNÍ STYLY --- */
+        .matching-container {
             display: flex;
             justify-content: space-between;
-            width: 100%;
-            max-width: 600px;
-            gap: 50px;
+            width: 90%;
+            max-width: 800px;
+            gap: 40px;
         }
 
-        .column {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            flex: 1;
-        }
+        .col { display: flex; flex-direction: column; gap: 15px; flex: 1; }
 
-        .match-card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
+        .match-item {
+            background-color: var(--card-back);
+            padding: 15px;
+            border-radius: 8px;
             cursor: pointer;
             border: 2px solid transparent;
-            transition: all 0.3s;
-            user-select: none;
+            min-height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 60px;
+            text-align: center;
+            transition: 0.3s;
         }
 
-        .match-card img {
-            max-width: 50px;
-            max-height: 50px;
+        .match-item:hover { border-color: var(--accent); }
+        .match-item.selected { background-color: var(--accent); color: white; transform: scale(1.02); }
+        .match-item.correct { background-color: var(--correct); border-color: var(--correct); pointer-events: none; opacity: 0.6; }
+        .match-item.wrong { animation: shake 0.4s; border-color: var(--wrong); }
+
+        .match-item img { max-height: 50px; filter: invert(1); } /* Invertuje barvy pro tmavý režim pokud máš černé čáry */
+        .match-item.correct img { filter: brightness(0) invert(1); }
+
+        /* Responzivita */
+        @media (max-width: 800px) {
+            .pexeso-grid { grid-template-columns: repeat(4, 1fr); }
+            .card { width: 80px; height: 80px; font-size: 0.7rem; }
+            .matching-container { gap: 10px; }
+            .match-item { font-size: 0.85rem; padding: 10px; }
         }
 
-        .match-card:hover { border-color: var(--primary); }
-        .match-card.selected { border-color: var(--secondary); background: rgba(236, 72, 153, 0.2); }
-        .match-card.correct { border-color: #22c55e; opacity: 0.5; pointer-events: none; }
-        .match-card.wrong { animation: shake 0.5s; border-color: #ef4444; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } 100% { transform: translateX(0); } }
-
-        /* Responsivita */
-        @media (max-width: 600px) {
-            .pexeso-grid { grid-template-columns: repeat(3, 1fr); }
-            .matching-area { gap: 20px; }
-        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
     </style>
 </head>
 <body>
 
-    <div id="menu" class="container active">
-        <h1>Vyber si hru</h1>
-        <button class="btn btn-game1" onclick="showSection('pexeso')">🎮 Pexeso</button>
-        <button class="btn btn-game2" onclick="showSection('matching')">🔗 Spojování</button>
+    <div id="menu" class="menu-container">
+        <h1>⚡ Pneumatické Symboly</h1>
+        <button class="btn" onclick="startGame('pexeso')">Pexeso (Symbol ↔ Text)</button>
+        <button class="btn" onclick="startGame('matching')">Spojovačka</button>
     </div>
 
-    <div id="pexeso" class="container">
-        <h2>Najdi dvojice</h2>
-        <div class="pexeso-grid" id="pexesoGrid">
-            </div>
-        <button class="btn btn-back" onclick="showSection('menu')">← Zpět do menu</button>
+    <div id="pexeso-game" class="game-section">
+        <h2>Najdi dvojici: Symbol a Název</h2>
+        <div class="pexeso-grid" id="pexeso-board"></div>
+        <button class="btn btn-small" onclick="goBack()">← Zpět do menu</button>
     </div>
 
-    <div id="matching" class="container">
-        <h2>Spoj, co k sobě patří</h2>
-        <div class="matching-area">
-            <div class="column" id="colLeft"></div>
-            <div class="column" id="colRight"></div>
-        </div>
-        <button class="btn btn-back" onclick="showSection('menu')">← Zpět do menu</button>
+    <div id="matching-game" class="game-section">
+        <h2>Spoj symbol se správným názvem</h2>
+        <div class="matching-container">
+            <div class="col" id="left-col"></div> <div class="col" id="right-col"></div> </div>
+        <button class="btn btn-small" onclick="goBack()">← Zpět do menu</button>
     </div>
 
     <script>
-        // --- DATA PRO HRY (ZDE SI UPRAV OBRÁZKY) ---
-        
-        // Data pro Pexeso (cesty k obrázkům nebo emoji)
-        const pexesoData = ['🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝']; 
-        // Pokud chceš obrázky, změň to takto:
-        // const pexesoData = ['img1.jpg', 'img2.jpg', ...];
-
-        // Data pro Spojování (páry id: hodnota)
-        const matchingPairs = [
-            { id: 1, left: 'Pes', right: '🐶' },
-            { id: 2, left: 'Kočka', right: '🐱' },
-            { id: 3, left: 'Auto', right: '🚗' },
-            { id: 4, left: 'Letadlo', right: '✈️' }
+        // --- DATA Z TVÉHO OBRÁZKU ---
+        // Zde jsou přepsané názvy z fotky.
+        // 'img' odkazuje na soubor, který musíš vytvořit (výstřižek z fotky).
+        const data = [
+            { id: 1, name: "Dvojčinný pohon", img: "img1.png" },
+            { id: 2, name: "Jednočinný pohon", img: "img2.png" },
+            { id: 3, name: "Kompresor, zdroj tlaku", img: "img3.png" },
+            { id: 4, name: "Jednotka úpravy vzduchu", img: "img4.png" },
+            { id: 5, name: "Motor s průchozí pístnicí", img: "img5.png" },
+            { id: 6, name: "Motor s nastavitelným tlumením", img: "img6.png" },
+            { id: 7, name: "Kyvný motor", img: "img7.png" },
+            { id: 8, name: "Rotační motor", img: "img8.png" },
+            { id: 9, name: "Zpětný ventil", img: "img9.png" },
+            { id: 10, name: "Škrtící ventil", img: "img10.png" },
+            { id: 11, name: "Manometr", img: "img11.png" },
+            { id: 12, name: "Redukční ventil", img: "img12.png" }
         ];
-        // Můžeš použít obrázky: { id: 1, left: '<img src="pes.jpg">', right: '<img src="bouda.jpg">' }
 
         // --- NAVIGACE ---
-        function showSection(sectionId) {
-            document.querySelectorAll('.container').forEach(el => el.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
+        function startGame(type) {
+            document.getElementById('menu').style.display = 'none';
+            document.querySelectorAll('.game-section').forEach(el => el.classList.remove('active'));
             
-            if(sectionId === 'pexeso') initPexeso();
-            if(sectionId === 'matching') initMatching();
+            if (type === 'pexeso') {
+                document.getElementById('pexeso-game').classList.add('active');
+                initPexeso();
+            } else {
+                document.getElementById('matching-game').classList.add('active');
+                initMatching();
+            }
         }
 
-        // --- LOGIKA PEXESA ---
+        function goBack() {
+            document.querySelectorAll('.game-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('menu').style.display = 'flex';
+        }
+
+        // --- LOGIKA PEXESA (Symbol vs Text) ---
         function initPexeso() {
-            const grid = document.getElementById('pexesoGrid');
-            grid.innerHTML = '';
+            const board = document.getElementById('pexeso-board');
+            board.innerHTML = '';
             
-            // Duplikování a míchání
-            let cards = [...pexesoData, ...pexesoData];
+            // Vytvoříme pole karet: pro každé ID jednu kartu s textem a jednu s obrázkem
+            let cards = [];
+            data.forEach(item => {
+                cards.push({ id: item.id, type: 'text', content: item.name });
+                cards.push({ id: item.id, type: 'img', content: `<img src="${item.img}" alt="Symbol ${item.id}" onerror="this.src='https://placehold.co/100?text=${item.id}'">` });
+            });
+
+            // Zamíchat
             cards.sort(() => 0.5 - Math.random());
 
-            let firstCard = null;
-            let secondCard = null;
+            let hasFlippedCard = false;
             let lockBoard = false;
+            let firstCard, secondCard;
 
-            cards.forEach(item => {
+            cards.forEach(cardData => {
                 const card = document.createElement('div');
-                card.classList.add('pexeso-card');
-                
-                // Kontrola, zda je to obrázek nebo text/emoji
-                const content = item.includes('.') ? `<img src="${item}">` : item;
+                card.classList.add('card');
+                card.dataset.id = cardData.id;
 
                 card.innerHTML = `
-                    <div class="front">?</div>
-                    <div class="back">${content}</div>
+                    <div class="card-face card-front">?</div>
+                    <div class="card-face card-back">${cardData.content}</div>
                 `;
-                
+
                 card.addEventListener('click', function() {
                     if (lockBoard || this === firstCard || this.classList.contains('flipped')) return;
 
                     this.classList.add('flipped');
 
-                    if (!firstCard) {
+                    if (!hasFlippedCard) {
+                        hasFlippedCard = true;
                         firstCard = this;
                         return;
                     }
 
                     secondCard = this;
-                    lockBoard = true;
-
-                    // Kontrola shody
-                    if (firstCard.innerHTML === secondCard.innerHTML) {
-                        firstCard = null;
-                        secondCard = null;
-                        lockBoard = false;
-                    } else {
-                        setTimeout(() => {
-                            firstCard.classList.remove('flipped');
-                            secondCard.classList.remove('flipped');
-                            firstCard = null;
-                            secondCard = null;
-                            lockBoard = false;
-                        }, 1000);
-                    }
+                    checkForMatch();
                 });
-                grid.appendChild(card);
+
+                board.appendChild(card);
             });
+
+            function checkForMatch() {
+                // Porovnáváme ID karet (např. ID 1 Text == ID 1 Obrázek)
+                let isMatch = firstCard.dataset.id === secondCard.dataset.id;
+                isMatch ? disableCards() : unflipCards();
+            }
+
+            function disableCards() {
+                setTimeout(() => {
+                    firstCard.classList.add('matched');
+                    secondCard.classList.add('matched');
+                    resetBoard();
+                }, 500);
+            }
+
+            function unflipCards() {
+                lockBoard = true;
+                setTimeout(() => {
+                    firstCard.classList.remove('flipped');
+                    secondCard.classList.remove('flipped');
+                    resetBoard();
+                }, 1000);
+            }
+
+            function resetBoard() {
+                [hasFlippedCard, lockBoard] = [false, false];
+                [firstCard, secondCard] = [null, null];
+            }
         }
 
-        // --- LOGIKA SPOJOVÁNÍ ---
+        // --- LOGIKA SPOJOVAČKY ---
         let selectedLeft = null;
         let selectedRight = null;
 
         function initMatching() {
-            const leftCol = document.getElementById('colLeft');
-            const rightCol = document.getElementById('colRight');
+            const leftCol = document.getElementById('left-col');
+            const rightCol = document.getElementById('right-col');
             leftCol.innerHTML = '';
             rightCol.innerHTML = '';
 
-            // Zamíchání pravé strany, aby to nebylo vedle sebe
-            let rightItems = [...matchingPairs].sort(() => 0.5 - Math.random());
+            // Připravíme data
+            let leftItems = [...data]; // Symboly
+            let rightItems = [...data]; // Texty
 
-            matchingPairs.forEach(pair => {
-                const el = createMatchCard(pair.left, pair.id, 'left');
+            // Zamícháme jen jednu stranu (pravou), aby to nebylo v řádku
+            rightItems.sort(() => 0.5 - Math.random());
+
+            // Vykreslení LEVÉHO sloupce (Obrázky)
+            leftItems.forEach(item => {
+                const el = document.createElement('div');
+                el.classList.add('match-item');
+                el.dataset.id = item.id;
+                el.dataset.side = 'left';
+                // Fallback obrázek (když ho nenajde, zobrazí číslo)
+                el.innerHTML = `<img src="${item.img}" alt="Symbol" onerror="this.style.display='none'; this.parentElement.innerText='Symbol ${item.id}'">`;
+                el.addEventListener('click', handleMatchClick);
                 leftCol.appendChild(el);
             });
 
-            rightItems.forEach(pair => {
-                const el = createMatchCard(pair.right, pair.id, 'right');
+            // Vykreslení PRAVÉHO sloupce (Texty)
+            rightItems.forEach(item => {
+                const el = document.createElement('div');
+                el.classList.add('match-item');
+                el.dataset.id = item.id;
+                el.dataset.side = 'right';
+                el.innerText = item.name;
+                el.addEventListener('click', handleMatchClick);
                 rightCol.appendChild(el);
             });
         }
 
-        function createMatchCard(content, id, side) {
-            const div = document.createElement('div');
-            div.classList.add('match-card');
-            div.dataset.id = id;
-            div.dataset.side = side;
-            
-            // Pokud je content obrázek (HTML string), vloží se jako HTML, jinak text
-            div.innerHTML = content;
-
-            div.addEventListener('click', handleMatchClick);
-            return div;
-        }
-
         function handleMatchClick(e) {
-            const card = e.currentTarget;
-            if (card.classList.contains('correct')) return;
+            const el = e.currentTarget;
+            if (el.classList.contains('correct')) return;
 
-            const side = card.dataset.side;
+            const side = el.dataset.side;
 
-            // Výběr karty
             if (side === 'left') {
                 if (selectedLeft) selectedLeft.classList.remove('selected');
-                selectedLeft = card;
+                selectedLeft = el;
             } else {
                 if (selectedRight) selectedRight.classList.remove('selected');
-                selectedRight = card;
+                selectedRight = el;
             }
-            card.classList.add('selected');
+            el.classList.add('selected');
 
-            // Pokud jsou vybrány obě, zkontroluj shodu
             if (selectedLeft && selectedRight) {
-                checkMatch();
+                checkPair();
             }
         }
 
-        function checkMatch() {
+        function checkPair() {
             if (selectedLeft.dataset.id === selectedRight.dataset.id) {
                 // Správně
                 selectedLeft.classList.add('correct');
                 selectedRight.classList.add('correct');
-                selectedLeft.classList.remove('selected');
-                selectedRight.classList.remove('selected');
-                selectedLeft = null;
-                selectedRight = null;
+                clearSelection();
             } else {
                 // Špatně
                 selectedLeft.classList.add('wrong');
@@ -360,10 +367,14 @@
                 setTimeout(() => {
                     if (selectedLeft) selectedLeft.classList.remove('wrong', 'selected');
                     if (selectedRight) selectedRight.classList.remove('wrong', 'selected');
-                    selectedLeft = null;
-                    selectedRight = null;
+                    clearSelection();
                 }, 500);
             }
+        }
+
+        function clearSelection() {
+            selectedLeft = null;
+            selectedRight = null;
         }
     </script>
 </body>
