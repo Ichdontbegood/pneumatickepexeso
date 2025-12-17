@@ -25,7 +25,7 @@
             --text-color: #1e293b;
             --accent: #2563eb;
             --accent-hover: #1d4ed8;
-            --card-back: #e2e8f0; /* Světlé pozadí kartičky */
+            --card-back: #e2e8f0;
             --correct: #16a34a;
             --wrong: #dc2626;
             --modal-bg: rgba(255, 255, 255, 0.95);
@@ -185,8 +185,7 @@
         }
 
         .card-back {
-            /* Zde je pozadí vždy bílé, aby obrázky vypadaly dobře */
-            background-color: #fff;
+            background-color: #fff; /* Vždy bílé pozadí PRO OBRÁZEK PEXESA */
             color: #000;
             transform: rotateY(180deg);
             overflow: hidden;
@@ -207,7 +206,8 @@
         .col { display: flex; flex-direction: column; gap: 15px; flex: 1; }
 
         .match-item {
-            background-color: var(--card-back);
+            /* ZDE JE OPRAVA: Barva pozadí se bere z tématu (např. tmavá), nikoliv bílá */
+            background-color: var(--card-back); 
             padding: 15px;
             border-radius: 8px;
             cursor: pointer;
@@ -219,14 +219,7 @@
             text-align: center;
             transition: 0.2s;
             user-select: none;
-            /* Pokud je obrázek menší než buňka, zajistíme, aby pozadí za ním bylo bílé */
             overflow: hidden; 
-        }
-        
-        /* Speciální úprava pro položky, které obsahují obrázek */
-        .match-item:has(img) {
-             background-color: white; /* Vynutíme bílé pozadí pro buňku s obrázkem */
-             color: black;
         }
 
         .match-item:hover { border-color: var(--accent); }
@@ -234,10 +227,11 @@
         .match-item.correct { background-color: var(--correct) !important; border-color: var(--correct); opacity: 0.5; pointer-events: none; }
         .match-item.wrong { animation: shake 0.4s; border-color: var(--wrong); }
 
-        /* ZDE BYLA ZMĚNA: Odstraněn filter: invert(1) */
+        /* Obrázek uvnitř tlačítka - žádná inverze, kulaté rohy pro hezčí vzhled na tmavém pozadí */
         .match-item img { 
             max-height: 50px;
-            /* Obrázky se nyní zobrazují v originále (černé na bílém) */
+            border-radius: 4px; 
+            /* Žádný filtr = originální bílé pozadí JPG */
         }
 
         /* --- VYSKAKOVACÍ OKNO (MODAL) --- */
