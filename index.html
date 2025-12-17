@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pneumatika hrou</title>
+    <title>Schématické značky</title>
     <style>
-        /* --- DEFINICE TÉMAT (CSS Proměnné) --- */
+      
         
-        /* 1. Cyber (Výchozí - Tmavé) */
+        /* 1. Tmavé */
         :root {
             --bg-color: #1e293b;
             --text-color: #f1f5f9;
@@ -19,7 +19,7 @@
             --modal-bg: rgba(30, 41, 59, 0.95);
         }
 
-        /* 2. Kancelář (Světlé) */
+        /* 2. Světlé */
         [data-theme="office"] {
             --bg-color: #f8fafc;
             --text-color: #1e293b;
@@ -31,7 +31,7 @@
             --modal-bg: rgba(255, 255, 255, 0.95);
         }
 
-        /* 3. Les (Přírodní - Tmavé) */
+        /* 3. Zelené */
         [data-theme="forest"] {
             --bg-color: #1a2e1a;
             --text-color: #ecfccb;
@@ -43,7 +43,7 @@
             --modal-bg: rgba(26, 46, 26, 0.95);
         }
 
-        /* 4. Retro (Starý papír - Světlé) */
+        /* 4. Béžové */
         [data-theme="retro"] {
             --bg-color: #fef3c7;
             --text-color: #78350f;
@@ -55,7 +55,7 @@
             --modal-bg: rgba(254, 243, 199, 0.95);
         }
 
-        /* 5. Drákula (Fialová - Tmavé) */
+        /* 5. Fialové */
         [data-theme="dracula"] {
             --bg-color: #2e1065;
             --text-color: #e9d5ff;
@@ -283,16 +283,16 @@
     <div class="header-controls">
         <label for="themeSelect">Téma: </label>
         <select id="themeSelect" onchange="changeTheme(this.value)">
-            <option value="default">Cyber (Tmavé)</option>
-            <option value="office">Kancelář (Světlé)</option>
-            <option value="forest">Les (Tmavé)</option>
-            <option value="retro">Retro (Světlé)</option>
-            <option value="dracula">Drákula (Tmavé)</option>
+            <option value="default">Tmavé</option>
+            <option value="office">Světlé</option>
+            <option value="forest">Zelené</option>
+            <option value="retro">Béžové</option>
+            <option value="dracula">Fialové</option>
         </select>
     </div>
 
     <div id="menu" class="menu-container">
-        <h1>⚡ Pneumatické Symboly</h1>
+        <h1>Pneumatiské schématické značky</h1>
         <div>
             <button class="btn" onclick="startGame('pexeso')">Pexeso</button>
             <button class="btn" onclick="startGame('matching')">Spojovačka</button>
@@ -302,8 +302,8 @@
     <div id="pexeso-game" class="game-section">
         <h2>Pexeso: Symbol & Název</h2>
         <div class="controls-bar">
-            <button class="btn btn-secondary" onclick="restartGame()">🔄 Hrát znovu</button>
-            <button class="btn btn-secondary" onclick="goBack()">🏠 Menu</button>
+            <button class="btn btn-secondary" onclick="restartGame()">Hrát znovu</button>
+            <button class="btn btn-secondary" onclick="goBack()">Menu</button>
         </div>
         <div class="pexeso-grid" id="pexeso-board"></div>
     </div>
@@ -311,8 +311,8 @@
     <div id="matching-game" class="game-section">
         <h2>Spojovačka</h2>
         <div class="controls-bar">
-            <button class="btn btn-secondary" onclick="restartGame()">🔄 Hrát znovu</button>
-            <button class="btn btn-secondary" onclick="goBack()">🏠 Menu</button>
+            <button class="btn btn-secondary" onclick="restartGame()">Hrát znovu</button>
+            <button class="btn btn-secondary" onclick="goBack()">Menu</button>
         </div>
         <div class="matching-container">
             <div class="col" id="left-col"></div>
@@ -322,11 +322,11 @@
 
     <div id="gameOverModal" class="modal">
         <div class="modal-content">
-            <h2>Výborně! 🎉</h2>
+            <h2>Výborně!</h2>
             <div id="modal-stats" class="stats-text">
                 </div>
-            <button class="btn" onclick="restartGame()">🔄 Hrát znovu</button>
-            <button class="btn btn-secondary" onclick="goBack()">🏠 Zpět do menu</button>
+            <button class="btn" onclick="restartGame()">Hrát znovu</button>
+            <button class="btn btn-secondary" onclick="goBack()">Zpět do menu</button>
         </div>
     </div>
 
